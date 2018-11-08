@@ -1,25 +1,22 @@
-// tofix
-const sortColors = function (nums) {
+// mergeSort
+const mergeSort = function (nums) {
   let l = 0, k = Math.round(nums.length / 2), r = nums.length
-  if (l === r - 1) return nums[l]
-  return joinArray(sortColors(nums.slice(l, k)), sortColors(nums.slice(k, r)))
+  if (l === r - 1) return nums
+  return joinArray(mergeSort(nums.slice(l, k)), mergeSort(nums.slice(k, r)))
 };
 
 const joinArray = function(leftArr, rightArr) {
-  const tempArr = []
-  const leftLength = leftArr.length
-  const rightLength = rightArr.length
-  for(let i = 0; i < rightLength; i++) {
-      let temp = leftArr[i] > rightArr[i] ? rightArr[i] : leftArr[i]
-      tempArr.push(temp)
+  let tempArr = []
+  let leftIndex = 0
+  let rightIndex = 0
+  while (leftIndex < leftArr.length && rightIndex < rightArr.length) { 
+    const temp = leftArr[leftIndex] < rightArr[rightIndex] ? leftArr[leftIndex++] : rightArr[rightIndex++]
+    tempArr.push(temp)
   }
-  const lastTemp = tempArr.pop()
-  if (lastTemp > leftArr[leftLength - 1]) {
-      tempArr.push(leftArr[leftLength - 1])
-      tempArr.push(lastTemp)
+  if (leftIndex < rightIndex) {
+    tempArr = tempArr.concat(leftArr.slice(leftIndex, leftArr.length))
   } else {
-      tempArr.push(lastTemp)
-      tempArr.push(leftArr[leftLength - 1])
+    tempArr = tempArr.concat(rightArr.slice(rightIndex, rightArr.length))
   }
   return tempArr
 }

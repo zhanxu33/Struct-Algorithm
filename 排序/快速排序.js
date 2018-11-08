@@ -5,23 +5,22 @@
  */
 const sortColors = function(nums) {
   quickSort(nums, 0, nums.length - 1)
-};
+}
 
 const quickSort = function(nums, left, right) {
   if (left < right) {
-      let mid = partSort(nums, left, right)
-      quickSort(nums, left, mid - 1)
-      quickSort(nums, mid + 1, right)
+    let mid = partSort(nums, left, right)
+    quickSort(nums, left, mid - 1)
+    quickSort(nums, mid + 1, right)
   }
 }
 
 const partSort = function(nums, left, right) {
-  let k = right, curr = nums[right]
+  let curr = nums[right]
   while(left < right) {
     for (let i = left; i < right; i++) { 
       if (nums[left] > curr) {
-        nums[k] = nums[left]
-        k = left
+        nums[right] = nums[left]
         break
       } else { 
         left++
@@ -29,13 +28,12 @@ const partSort = function(nums, left, right) {
     }
     for (let i = right; i > left; i--) { 
       if (nums[right] < curr) {
-        nums[k] = nums[right]
-        k = right
+        nums[left] = nums[right]
       } else { 
         right--
       }
     }
   }
-  nums[k] = curr
-  return k
+  nums[left] = curr
+  return left
 }
