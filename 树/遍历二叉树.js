@@ -27,7 +27,7 @@ function lrt (root) {
 function byFloor (root) {
   const arr = [root]
   while (arr.length) {
-    const first = arr.pop()
+    const first = arr.shift()
     console.log(first.value)
     if (first.left) arr.push(first.left)
     if (first.right) arr.push(first.right)
