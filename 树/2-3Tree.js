@@ -25,53 +25,11 @@ function Tree(arr) {
 Tree.prototype.add = function (val) {
   if (this.tree === null) { this.tree = new TreeNode(val); return }
   let newVal = addMerge(val, this.tree)
-  let left = this.tree.left || { leftVal: null, rightVal: null }
-  let mid = this.tree.mid || { leftVal: null, rightVal: null }
-  let right = this.tree.right || { leftVal: null, rightVal: null}
   if (newVal !== null) {
-    if (this.tree.rightVal !== null) {
-      let newNode = null
-      if (newVal < this.tree.leftVal) {
-        newNode = new TreeNode(this.tree.leftVal)
-        newNode.left = new TreeNode(newVal)
-        newNode.left.left = left.leftVal
-        newNode.left.right = left.rightVal
-
-        newNode.right = new TreeNode(this.tree.rightVal)
-        newNode.right.left = mid
-        newNode.right.right = right
-      } else if (newVal < this.tree.rightVal) {
-        newNode = new TreeNode(newVal)
-        newNode.left = new TreeNode(this.tree.leftVal)
-        newNode.left.left = left
-        newNode.left.right = mid.leftVal
-
-        newNode.right = new TreeNode(this.tree.rightVal)
-        newNode.right.left = mid.rightVal
-        newNode.right.right = right
-      } else {
-        newNode = new TreeNode(this.tree.rightVal)
-        newNode.left = new TreeNode(this.tree.leftVal)
-        newNode.left.left = left
-        newNode.left.right = mid
-
-        newNode.right = new TreeNode(newVal)
-        newNode.right.left = right.leftVal
-        newNode.right.right = right.rightVal
-      }
-      this.tree = newNode
-    } else {
-      if (newVal < this.tree.leftVal) {
-        this.tree.rightVal = this.tree.leftVal
-        this.tree.leftVal = newVal
-        this.tree.left = left.leftVal
-        this.tree.mid = left.rightVal
-      } else {
-        this.tree.rightVal = newVal
-        this.tree.right = right.rightVal
-        this.tree.mid = right.leftVal
-      }
-    }
+    const topNode = new TreeNode(newVal)
+    topNode.left = this.tree.leftVal
+    topNode.right = this.tree.rightVal
+    this.tree = topNode
   }
 }
 
@@ -150,7 +108,7 @@ function addMerge (val, curNode) {
         return null
       } else {
         // 三树
-        let temp = curNode.right
+        let temp = curNode.rightVal
         curNode.leftVal = new TreeNode(curNode.leftVal)
         curNode.leftVal.left = curNode.left
         curNode.leftVal.right = curNode.mid
@@ -164,5 +122,11 @@ function addMerge (val, curNode) {
   }
 }
 
-var a = new Tree([1, 2])
-a.add(3)
+/**
+ * 排序，递归中序遍历
+ */
+Tree.prototype.sort = function() {
+  let res = []
+  
+  return res
+}
