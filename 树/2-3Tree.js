@@ -69,8 +69,8 @@ function addMerge (val, curNode) {
       if (curNode.rightVal === null) {
         curNode.rightVal = curNode.leftVal
         curNode.leftVal = newVal
-        curNode.left = curNode.left.leftVal
         curNode.mid = curNode.left.rightVal
+        curNode.left = curNode.left.leftVal
         return null
       } else {
         // 三树
@@ -125,8 +125,24 @@ function addMerge (val, curNode) {
 /**
  * 排序，递归中序遍历
  */
-Tree.prototype.sort = function() {
+Tree.prototype.sort = function(curNode = this.tree) {
   let res = []
-  
+  if (curNode.left === null) {
+    // 叶子节点
+    res.push(curNode.leftVal)
+    if (curNode.rightVal !== null) res.push(curNode.rightVal)
+  } else if (curNode.rightVal !== null) {
+    // 三树
+    res = res.concat(this.sort(curNode.left))
+    res.push(curNode.leftVal)
+    res = res.concat(this.sort(curNode.mid))
+    res.push(curNode.rightVal)
+    res = res.concat(this.sort(curNode.right))
+  } else {
+    // 2树
+    res = res.concat(this.sort(curNode.left))
+    res.push(curNode.leftVal)
+    res = res.concat(this.sort(curNode.right))
+  }
   return res
 }
