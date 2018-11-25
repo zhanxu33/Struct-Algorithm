@@ -146,3 +146,49 @@ Tree.prototype.sort = function(curNode = this.tree) {
   }
   return res
 }
+
+/**
+ * 查找
+ */
+Tree.prototype.find = function(val) {
+  let curNode = this.tree
+  while(curNode !== null) {
+    if (val === curNode.leftVal || val === curNode.rightVal) return curNode
+    if (val < curNode.leftVal) curNode = curNode.left
+    else if (val < curNode.rightVal) curNode = curNode.mid
+    else curNode = curNode.right
+  }
+  return false
+}
+
+/**
+ * 删除节点
+ */
+Tree.prototype.delete = function(val) {
+  let deleteVal = val
+  let parent = null
+  let curNode = this.tree
+  while(curNode !== null && deleteVal !== curNode.leftVal && deleteVal !== curNode.rightVal) {
+    parent = curNode
+    if (deleteVal < curNode.leftVal) curNode = curNode.left
+    else if (deleteVal < curNode.rightVal) curNode = curNode.mid
+    else curNode = curNode.right
+  }
+  if (curNode === null) return false
+
+  // 叶子节点的时候，需要将
+  if (curNode.left !== null) {
+    let minNode = curNode.right
+    let pMinNode = curNode
+    while (minNode.left !== null) {
+      pMinNode = minNode
+      minNode = minNode.left
+    }
+    if (deleteVal === curNode.leftVal) curNode.leftVal = minNode.leftVal
+    else if (deleteVal === curNode.rightVal) curNode.rightVal = minNode.leftVal
+
+    deleteVal = minNode.leftVal
+    parent = pMinNode
+    curNode = minNode
+  }
+}
