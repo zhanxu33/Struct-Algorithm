@@ -166,9 +166,11 @@ Tree.prototype.find = function(val) {
  */
 Tree.prototype.delete = function(val) {
   let deleteVal = val
+  let grand = null
   let parent = null
   let curNode = this.tree
-  while(curNode !== null && deleteVal !== curNode.leftVal && deleteVal !== curNode.rightVal) {
+  while (curNode !== null && deleteVal !== curNode.leftVal && deleteVal !== curNode.rightVal) {
+    grand = parent
     parent = curNode
     if (deleteVal < curNode.leftVal) curNode = curNode.left
     else if (deleteVal < curNode.rightVal) curNode = curNode.mid
@@ -176,11 +178,13 @@ Tree.prototype.delete = function(val) {
   }
   if (curNode === null) return false
 
-  // 叶子节点的时候，需要将
+  // 非叶子节点的时候，需要将右/中子树最小的拿出来替换
   if (curNode.left !== null) {
-    let minNode = curNode.right
+    let minNode = deleteVal === curNode.leftVal ? curNode.mid : curNode.right
     let pMinNode = curNode
+    let gMinNode = grand
     while (minNode.left !== null) {
+      gMinNode = pMinNode
       pMinNode = minNode
       minNode = minNode.left
     }
@@ -188,7 +192,83 @@ Tree.prototype.delete = function(val) {
     else if (deleteVal === curNode.rightVal) curNode.rightVal = minNode.leftVal
 
     deleteVal = minNode.leftVal
+    grand = gMinNode
     parent = pMinNode
     curNode = minNode
+  }
+
+  if (curNode.rightVal !== null) {
+    curNode.leftVal = curNode.rightVal
+    curNode.rightVal = null
+  } else {
+    // 需要根据情况，对树进行更改，以满足23树的定义
+    if (parent.rightVal !== null) {
+      if (curNode === parent.left) {
+        if (parent.mid.rightVal !== null) {
+          parent.left.leftVal = parent.leftVal
+          parent.leftVal = parent.mid.leftVal
+          parent.mid.leftVal = parent.mid.rightVal
+          parent.mid.rightVal = null
+        } else {
+          curNode.leftVal = parent.leftVal
+          curNode.rightVal = parent.mid.leftVal
+          parent.leftVal = parent.rightVal
+          parent.rightVal = null
+          parent.mid = null
+        }
+      } else if (curNode === parent.mid) {
+        if (parent.right.rightVal !== null) {
+          curNode.leftVal = parent.rightVal
+          parent.rightVal = parent.right.leftVal
+          parent.right.leftVal = parent.right.rightVal
+          parent.right.rightVal = null
+        } else {
+          parent.right.rightVal = parent.right.leftVal
+          parent.right.leftVal = parent.rightVal
+          parent.rightVal = null
+          parent.mid = null
+        }
+      } else {
+        if (parent.mid.rightVal !== null) {
+          curNode.leftVal = parent.mid.leftVal
+          curNode.rightVal = parent.rightVal
+          parent.rightVal = null
+          parent.mid = null
+        } else {
+          curNode.leftVal = parent.rightVal
+          parent.rightVal = parent.mid.rightVal
+        }
+      }
+    } else {
+      // 父节点是单节点，tofix: 删除满二叉树的时候，需要对父节点融合
+      if (curNode === parent.left) {
+        if (parent.right.rightVal !== null) {
+          curNode.leftVal = parent.leftVal
+          parent.leftVal = parent.right.leftVal
+          parent.right.leftVal = parent.right.rightVal
+          parent.right.rightVal = null
+        } else {
+          parent.rightVal = parent.right.leftVal
+          grand.rightVal = grand.right.leftVal
+          grand.mid = grand.right.left
+          grand.right = grand.right.right
+          parent.right = null
+          parent.left = null
+        }
+      } else {
+        if (parent.left.rightVal !== null) {
+          curNode.leftVal = parent.leftVal
+          parent.leftVal = parent.left.rightVal
+          parent.left.rightVal = null
+        } else {
+          parent.rightVal = parent.left.leftVal
+          grand.rightVal = grand.right.leftVal
+          grand.mid = grand.right.left
+          grand.right = grand.right.right
+          parent.right = null
+          parent.left = null
+        }
+      }
+    }
   }
 }
