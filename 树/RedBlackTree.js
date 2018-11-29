@@ -6,6 +6,14 @@
  * 4.叶子节点都是黑色空节点
  */
 
+// 黑色哨兵节点
+const NIL = {
+  val: null,
+  left: null,
+  right: null,
+  color: 'black'
+}
+
 /**
  * 红黑树节点数据结构
  */
@@ -14,14 +22,6 @@ function TreeNode(val) {
   this.left = NIL
   this.right = NIL
   this.color = 'red'
-}
-
-// 黑色哨兵节点
-const NIL = {
-  val: null,
-  left: null,
-  right: null,
-  color: 'black'
 }
 
 /**
@@ -59,6 +59,7 @@ RedBlackTree.prototype.add = function(val) {
   while (curNode !== this.tree) {
     const parent = parents[curNode]
     if (parent.color === 'black') break // 1.父节点是黑色，加个红色子节点，不破坏树结构
+    else if (parent === this.tree) { curNode.color = 'black'; break }
     else {
       const gp = parents[parent]
       if (parent.val < gp.val) {
@@ -71,6 +72,7 @@ RedBlackTree.prototype.add = function(val) {
           if (curNode === parent.right) { // 3.叔叔节点是黑色，关注节点是父亲节点的右节点，父亲节点左旋
             // 根据父亲节点左旋
             leftRotate(parent, gp)
+            curNode = parent
           } else {
             rightRotate(gp, parents[gp]) // 4.叔叔节点是黑色，关注节点是父节点的左子节点，祖父节点右旋，然后父和祖父节点交换颜色，调整结束
             parent.color = 'black'
@@ -127,7 +129,52 @@ function rightRotate (node, parent) {
  * 删除节点
  */
 RedBlackTree.prototype.delete = function(val) {
+  let curNode = this.tree.left
+  let parents = {}
+  // 找到需要删除的节点
+  while (curNode.val !== val && curNode !== NIL) {
+    let temp = curNode
+    if (curNode.val > val) curNode = curNode.left
+    else curNode = curNode.right
+    parents[curNode] = temp
+  }
+  if (curNode === NIL) return false
 
+  // 找到右边最小的替换
+  let parentMin = curNode
+  let rightMin = curNode.right
+  while (rightMin.left !== NIL) {
+    parentMin = rightMin
+    rightMin = rightMin.left
+  }
+  curNode.val = rightMin.val
+  parentMin.left = rightMin.right
+
+  // 旋转调整
+  let noticeNode = curNode.right
+  while (noticeNode !== NIL) {
+    let left = curNode.left
+    if (left.color === 'red') {
+      rightRotate(curNode, parents[curNode])
+      curNode.color = 'red'
+      left.color = 'black'
+    } else {
+      if (left.left.color === 'black' && left.right.color === 'black') {
+        left.color = 'red'
+        noticeNode = curNode
+      }
+      if (left.left.color === 'black' && left.right.color === 'red') {
+        leftRotate(left, curNode)
+        left.right.color === 'black'
+        left.color = 'red'
+      }
+      if (left.left.color === 'red') {
+        rightRotate(curNode, parents[curNode])
+        left.left.color === 'black'
+        break
+      }
+    }
+  }
 }
 
 /**
