@@ -178,8 +178,24 @@ RedBlackTree.prototype.delete = function(val) {
 }
 
 /**
- * TLR排序，非递归方式
+ * LTR排序，非递归方式
  */
 RedBlackTree.prototype.sort = function() {
+  let curNode = this.tree.left
+  const queue = []
+  const res = []
+  while (queue.length || curNode !== NIL) {
 
+    while (curNode !== NIL) {
+      queue.push(curNode)
+      curNode = curNode.left
+    }
+
+    if (queue.length) {
+      curNode = queue.pop()
+      res.push(curNode.val)
+      curNode = curNode.right
+    }    
+  }
+  return res
 }
