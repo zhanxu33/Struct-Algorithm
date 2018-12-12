@@ -38,6 +38,7 @@ function getCurrentWay (map, point, already) {
   return res
 }
 
+// 1是不能走的路，2是出口，走过的路不能再走
 var a = num_of_path([
   [0, 0, 0, 0, 2],
   [0, 1, 1, 0, 0],
