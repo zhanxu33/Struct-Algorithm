@@ -46,18 +46,31 @@ SuffixTree.prototype.find = function (str) {
   return curNode.isEnd
 }
 
+let longStr = ''
 SuffixTree.prototype.longest = function () {
   let curNode = this.tree
   let curChild = curNode.child
-  const queue = []
-  Object.keys(curChild).forEach(x => queue.push(curChild[x]))
 
-  while (queue.length > 0) {
-    curNode = queue.shift()
-    curChild = curNode.child
+  getLongStr(curChild, '')
+  return longStr
+}
 
-    Object.keys(curChild).forEach((x) => {
-      queue.push(curChild[x])
-    })
+function getLongStr (obj, str) {
+  const keys = Object.keys(obj)
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i]
+    let tempStr = str + key
+    let curNode = obj[key].child
+    if (tempStr.length > longStr.length && checkLeaf(curNode)) {
+      longStr = tempStr
+      getLongStr(curNode, tempStr)
+    }
   }
+}
+
+function checkLeaf (node) {
+  const keys = Object.keys(node)
+  if (keys.length > 1) return true
+  if (keys.length === 0) return false
+  if (keys.length === 1) return checkLeaf(node[keys[0]].child)
 }
